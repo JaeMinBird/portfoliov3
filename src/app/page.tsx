@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Loader from "./components/Loader";
 import HalftoneCursor from "./components/HalftoneCursor";
+import EmoticonDemo from "./components/EmoticonDemo";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -111,11 +112,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-[family-name:var(--font-black-han-sans)] mb-12" style={{ color: 'var(--jet)' }}>
               Featured Work
             </h2>
-            <div className="h-96 rounded-lg flex items-center justify-center" style={{ background: 'var(--cosmic-latte)' }}>
-              <p className="text-xl font-[family-name:var(--font-ibm-plex-mono)]" style={{ color: 'var(--onyx)' }}>
-                Featured project would appear here
-              </p>
-            </div>
+            <EmoticonDemo />
           </div>
         </section>
       </div>

@@ -93,7 +93,7 @@ const Loader: React.FC = () => {
           <pre 
             className="text-jet select-none absolute"
             style={{
-              fontFamily: 'monospace',
+              fontFamily: 'var(--font-jetbrains-mono), monospace',
               fontSize: '10px', 
               lineHeight: '1.2',
               letterSpacing: '0.1em',

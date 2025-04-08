@@ -9,6 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 The project uses the following fonts:
 - **Primary Font:** IBM Plex Mono (400, 500, 700) - Default body font
 - **Display Font:** Black Han Sans (400) - Used for headings and display text
+- **Emoticon Font:** JetBrains Mono - Used for ASCII art, emoticons, and terminal-style displays
 
 ### Color Palette
 
@@ -118,3 +119,17 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Identity & Brand
+
+The visual identity is built around these key elements:
+
+- **ASCII Art**: Embracing the retro charm of text-based art, creating a nostalgic connection to early computing
+- **Brutalism**: Adopting raw, unfiltered design elements that prioritize function and directness
+- **Terminal UI**: Drawing inspiration from command-line interfaces for a tech-authentic experience
+- **Wireframe Aesthetic**: Using minimal outlines and structural elements for a blueprint-like quality
+- **Retro-Future**: Combining vintage computing aesthetics with contemporary design principles
+- **Emoticons & Symbols**: Utilizing simple character combinations to create expressive visuals (⌐■_■) (ㅇㅅㅇ❀)
+- **Cat Motif**: Incorporating feline imagery as a playful, recurring theme throughout the brand
+
+This identity creates a unique digital persona that balances technical authenticity with approachable creativity. The combination of monospace typography, high-contrast colors, and ASCII art elements establishes a distinctive visual language that references computing history while feeling contemporary and deliberate.
