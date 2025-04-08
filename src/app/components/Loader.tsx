@@ -87,11 +87,11 @@ const Loader: React.FC = () => {
   }
   
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-cornsilk z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-lemon-chiffon z-50">
       <div className="flex flex-col items-center max-w-3xl w-full px-4 py-10">
-        <div className="h-[300px] w-full flex items-start justify-center relative mb-8">
+        <div className="h-[300px] w-full flex items-center justify-center relative">
           <pre 
-            className="text-brunswick-green select-none absolute"
+            className="text-jet select-none absolute"
             style={{
               fontFamily: 'monospace',
               fontSize: '10px', 
@@ -109,12 +109,14 @@ const Loader: React.FC = () => {
           </pre>
         </div>
         
-        <div className="text-center text-3xl font-bold text-coffee font-mono mb-4">
-          loading
-        </div>
-        
-        <div className="text-center text-5xl font-bold text-coffee font-mono">
-          {percentage}%
+        <div className="mt-10">
+          <div className="text-center text-3xl font-bold text-onyx font-mono mb-4">
+            loading
+          </div>
+          
+          <div className="text-center text-5xl font-bold text-mustard font-mono">
+            {percentage}%
+          </div>
         </div>
       </div>
     </div>

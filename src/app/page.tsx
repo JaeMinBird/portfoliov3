@@ -22,11 +22,11 @@ export default function Home() {
       {isLoading && <Loader />}
       <HalftoneCursor />
       
-      <div className="min-h-screen flex flex-col bg-cornsilk">
+      <div className="min-h-screen flex flex-col bg-lemon-chiffon">
         {/* Navigation */}
         <header className="px-6 py-6 md:px-16 md:py-8">
           <nav className="flex justify-between items-center">
-            <div className="text-3xl font-bold font-[family-name:var(--font-black-han-sans)]" style={{ color: 'var(--bistre)' }}>
+            <div className="text-3xl font-bold font-[family-name:var(--font-black-han-sans)]" style={{ color: 'var(--jet)' }}>
               {/* Logo cat.png here */}
               <Image 
                 src="/cat.png" 
@@ -42,7 +42,7 @@ export default function Home() {
                   key={item} 
                   href="#" 
                   className="hover:underline" 
-                  style={{ color: 'var(--brunswick-green)' }}
+                  style={{ color: 'var(--onyx)' }}
                 >
                   {item}
                 </a>
@@ -51,7 +51,7 @@ export default function Home() {
             <a 
               href="#contact" 
               className="text-base px-4 py-2 border-b-2" 
-              style={{ borderColor: 'var(--bistre)', color: 'var(--bistre)' }}
+              style={{ borderColor: 'var(--mustard)', color: 'var(--jet)' }}
             >
               Contact
             </a>
@@ -71,10 +71,10 @@ export default function Home() {
                   width={120} 
                   height={120} 
                   priority
-                  className="text-brunswick-green"
+                  className="text-mustard"
                 />
               </div>
-              <p className="text-base md:text-lg font-[family-name:var(--font-ibm-plex-mono)]" style={{ color: 'var(--brunswick-green)' }}>
+              <p className="text-base md:text-lg font-[family-name:var(--font-ibm-plex-mono)]" style={{ color: 'var(--onyx)' }}>
                 Welcome to my portfolio, showcasing expertise in design, 
                 development, and creative problem-solving in the digital space.
               </p>
@@ -82,7 +82,7 @@ export default function Home() {
 
             {/* Right column with headline */}
             <div className="md:w-2/3 md:pl-12">
-              <h1 className="text-5xl md:text-8xl font-[family-name:var(--font-black-han-sans)] leading-tight" style={{ color: 'var(--bistre)' }}>
+              <h1 className="text-5xl md:text-8xl font-[family-name:var(--font-black-han-sans)] leading-tight" style={{ color: 'var(--jet)' }}>
                 IDEAS WORTH
                 <br />
                 EXPLORING
@@ -95,24 +95,24 @@ export default function Home() {
             <a 
               href="#learn" 
               className="text-base md:text-lg border-b-2 pb-1" 
-              style={{ borderColor: 'var(--bistre)', color: 'var(--bistre)' }}
+              style={{ borderColor: 'var(--mustard)', color: 'var(--jet)' }}
             >
               Learn more about my work
             </a>
-            <div className="text-base md:text-lg" style={{ color: 'var(--brunswick-green)' }}>
+            <div className="text-base md:text-lg" style={{ color: 'var(--onyx)' }}>
               (SCROLL)
             </div>
           </div>
         </main>
 
         {/* Optional: Featured work section */}
-        <section className="p-6 md:p-16" style={{ background: 'var(--cornsilk)' }}>
+        <section className="p-6 md:p-16" style={{ background: 'var(--lemon-chiffon)' }}>
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-[family-name:var(--font-black-han-sans)] mb-12" style={{ color: 'var(--bistre)' }}>
+            <h2 className="text-3xl md:text-5xl font-[family-name:var(--font-black-han-sans)] mb-12" style={{ color: 'var(--jet)' }}>
               Featured Work
             </h2>
-            <div className="h-96 rounded-lg flex items-center justify-center" style={{ background: 'var(--tea-green)' }}>
-              <p className="text-xl font-[family-name:var(--font-ibm-plex-mono)]" style={{ color: 'var(--brunswick-green)' }}>
+            <div className="h-96 rounded-lg flex items-center justify-center" style={{ background: 'var(--cosmic-latte)' }}>
+              <p className="text-xl font-[family-name:var(--font-ibm-plex-mono)]" style={{ color: 'var(--onyx)' }}>
                 Featured project would appear here
               </p>
             </div>

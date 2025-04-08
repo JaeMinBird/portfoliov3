@@ -1,23 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  /* Nature-inspired color palette */
-  --brunswick-green: #344e41ff;
-  --fern-green: #588157ff;
-  --tea-green: #ccd5aeff;
-  --beige: #e9edc9ff;
-  --cornsilk: #fefae0ff;
-  --papaya-whip: #faedcdff;
-  --buff: #d4a373ff;
-  --coffee: #7f5539ff;
-  --bistre: #402b1dff;
+  /* Minimalist high-contrast color palette */
+  --mustard: #ffe042ff;
+  --lemon-chiffon: #fff7d2ff;
+  --cosmic-latte: #fff5e1ff;
+  --onyx: #3b3b3bff;
+  --jet: #2c2c2cff;
   
   /* Base UI colors */
-  --background: var(--cornsilk);
-  --foreground: var(--bistre);
-  --primary: var(--fern-green);
-  --secondary: var(--tea-green);
-  --accent: var(--buff);
+  --background: var(--lemon-chiffon);
+  --foreground: var(--jet);
+  --primary: var(--mustard);
+  --secondary: var(--cosmic-latte);
+  --accent: var(--mustard);
 }
 
 @theme inline {
@@ -29,40 +25,32 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: var(--bistre);
-    --foreground: var(--beige);
-    --primary: var(--fern-green);
-    --secondary: var(--brunswick-green);
-    --accent: var(--buff);
+    --background: var(--jet);
+    --foreground: var(--lemon-chiffon);
+    --primary: var(--mustard);
+    --secondary: var(--onyx);
+    --accent: var(--mustard);
   }
 }
 
 body {
-  background: var(--cornsilk);
+  background: var(--lemon-chiffon);
   color: var(--foreground);
   font-family: var(--font-ibm-plex-mono), monospace;
 }
 
 /* Additional utility classes for our color palette */
-.bg-brunswick-green { background-color: var(--brunswick-green); }
-.bg-fern-green { background-color: var(--fern-green); }
-.bg-tea-green { background-color: var(--tea-green); }
-.bg-beige { background-color: var(--beige); }
-.bg-cornsilk { background-color: var(--cornsilk); }
-.bg-papaya-whip { background-color: var(--papaya-whip); }
-.bg-buff { background-color: var(--buff); }
-.bg-coffee { background-color: var(--coffee); }
-.bg-bistre { background-color: var(--bistre); }
+.bg-mustard { background-color: var(--mustard); }
+.bg-lemon-chiffon { background-color: var(--lemon-chiffon); }
+.bg-cosmic-latte { background-color: var(--cosmic-latte); }
+.bg-onyx { background-color: var(--onyx); }
+.bg-jet { background-color: var(--jet); }
 
-.text-brunswick-green { color: var(--brunswick-green); }
-.text-fern-green { color: var(--fern-green); }
-.text-tea-green { color: var(--tea-green); }
-.text-beige { color: var(--beige); }
-.text-cornsilk { color: var(--cornsilk); }
-.text-papaya-whip { color: var(--papaya-whip); }
-.text-buff { color: var(--buff); }
-.text-coffee { color: var(--coffee); }
-.text-bistre { color: var(--bistre); }
+.text-mustard { color: var(--mustard); }
+.text-lemon-chiffon { color: var(--lemon-chiffon); }
+.text-cosmic-latte { color: var(--cosmic-latte); }
+.text-onyx { color: var(--onyx); }
+.text-jet { color: var(--jet); }
 
 /* Custom cursor styles */
 .cursor-container {
