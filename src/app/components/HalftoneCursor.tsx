@@ -70,8 +70,6 @@ export default function HalftoneCursor() {
       
       if (distance < 3) continue; // Skip smaller segments
       
-      const timeDiff = currPos.time - prevPos.time;
-      
       // Add fewer dots for trail - optimized for performance
       const dotCount = Math.min(2, Math.max(1, Math.floor(distance / 15)));
       
