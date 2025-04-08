@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import SectionWrapper from './components/SectionWrapper';
 import Hero from './components/Hero';
-import HalftoneCursor from './components/HalftoneCursor';
 import Loader from './components/Loader';
 
 export default function Home() {
@@ -20,7 +19,6 @@ export default function Home() {
   return (
     <>
       {loading && <Loader />}
-      <HalftoneCursor />
       <div>
         <SectionWrapper>
           <Hero />

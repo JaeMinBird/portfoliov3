@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 // Simplified DotPosition interface
 interface DotPosition {
@@ -11,35 +11,37 @@ interface DotPosition {
   distanceFromCursor: number;
   isTrailDot: boolean;
   creationTime: number;
-  initialOpacity: number;
-  velocityFactor: number;
   isFading: boolean;
 }
 
 interface CursorState {
-  position: { x: number; y: number };
   isVisible: boolean;
   trail: DotPosition[];
   lastMoveTime: number;
 }
 
 export default function HalftoneCursor() {
-  const [cursorState, setCursorState] = useState<CursorState>({
-    position: { x: 0, y: 0 },
+  // Optimized configuration - memoized to prevent recreation
+  const config = useMemo(() => ({
+    radius: 15,
+    innerRadius: 8,
+    gridSize: 6,
+    decayRate: 0.008,
+    trailDecayRate: 0.0015,
+    fastDecayRate: 0.05,
+    maxDots: 120,
+    throttleMs: 16
+  }), []);
+  
+  // Use refs for values that don't need to trigger re-renders
+  const cursorStateRef = useRef<CursorState>({
     isVisible: false,
     trail: [],
     lastMoveTime: Date.now()
   });
   
-  // Optimized configuration
-  const radius = 15;
-  const innerRadius = 8;
-  const gridSize = 6;
-  const decayRate = 0.008;
-  const trailDecayRate = 0.0015;
-  const fastDecayRate = 0.05;
-  const maxDots = 150;         // Reduced max dots for better performance
-  const throttleMs = 16;
+  // Only use state for values that affect rendering
+  const [trail, setTrail] = useState<DotPosition[]>([]);
   
   const requestRef = useRef<number | undefined>(undefined);
   const throttleRef = useRef<number | null>(null);
@@ -52,10 +54,9 @@ export default function HalftoneCursor() {
     if (prevPositions.length < 2) return [];
     
     const trailDots: DotPosition[] = [];
-    const positions = [...prevPositions];
     
-    // Only use recent positions (last 300ms) for trail
-    const recentPositions = positions.filter(pos => currentTime - pos.time < 300);
+    // Only use recent positions (last 300ms)
+    const recentPositions = prevPositions.filter(pos => currentTime - pos.time < 300);
     if (recentPositions.length < 2) return [];
     
     // Process pairs of positions to create line segments
@@ -63,35 +64,33 @@ export default function HalftoneCursor() {
       const prevPos = recentPositions[i-1];
       const currPos = recentPositions[i];
       
-      // Calculate segment properties
       const dx = currPos.x - prevPos.x;
       const dy = currPos.y - prevPos.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       
       if (distance < 3) continue; // Skip smaller segments
       
-      // Calculate time-based properties
       const timeDiff = currPos.time - prevPos.time;
       const speed = distance / Math.max(1, timeDiff);
       
-      // Add fewer dots for trail - just enough for continuity
-      const dotCount = Math.min(3, Math.max(1, Math.floor(distance / 10)));
+      // Add fewer dots for trail - optimized for performance
+      const dotCount = Math.min(2, Math.max(1, Math.floor(distance / 15)));
       
-      // Add dots along the segment
       for (let j = 0; j < dotCount; j++) {
         const t = j / dotCount;
         const x = prevPos.x + dx * t;
         const y = prevPos.y + dy * t;
         
-        // Calculate how new this segment is
+        // Calculate age factor
         const segmentAge = currentTime - currPos.time;
-        // Short-lived emphasis for newer segments
         const ageFactor = Math.max(0, 1 - segmentAge / 300);
+        
+        const opacity = 0.4 * (ageFactor + 0.2);
         
         trailDots.push({
           x,
           y,
-          opacity: 0.4 * (ageFactor + 0.2),
+          opacity,
           size: 1.2,
           distanceFromCursor: Math.sqrt(
             (x - currPos.x) * (x - currPos.x) + 
@@ -99,8 +98,6 @@ export default function HalftoneCursor() {
           ),
           isTrailDot: true,
           creationTime: currentTime,
-          initialOpacity: 0.4 * (ageFactor + 0.2),
-          velocityFactor: speed * 0.05,
           isFading: false
         });
       }
@@ -109,220 +106,230 @@ export default function HalftoneCursor() {
     return trailDots;
   }, []);
   
-  // Throttled mouse move handler
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (throttleRef.current !== null) return;
-    
+  // Process cursor state updates
+  const updateCursorState = useCallback((clientX: number, clientY: number) => {
     const currentTime = Date.now();
+    const { maxDots } = config;
     
     // Calculate cursor speed
     const currentSpeed = {
-      x: e.clientX - lastPositionRef.current.x,
-      y: e.clientY - lastPositionRef.current.y
+      x: clientX - lastPositionRef.current.x,
+      y: clientY - lastPositionRef.current.y
     };
     
     // Update last position
-    lastPositionRef.current = { x: e.clientX, y: e.clientY };
+    lastPositionRef.current = { x: clientX, y: clientY };
     
     // Track previous positions for trail effect
     previousPositionsRef.current.push({ 
-      x: e.clientX, 
-      y: e.clientY,
+      x: clientX, 
+      y: clientY,
       time: currentTime
     });
     
-    // Keep positions for trail
-    if (previousPositionsRef.current.length > 15) {
+    // Keep positions for trail, limit history
+    if (previousPositionsRef.current.length > 10) {
       previousPositionsRef.current.shift();
     }
     
-    // Smooth speed calculation
+    // Smooth speed calculation with exponential moving average
     speedRef.current = {
       x: speedRef.current.x * 0.8 + currentSpeed.x * 0.2,
       y: speedRef.current.y * 0.8 + currentSpeed.y * 0.2
     };
     
+    // Current cursor state
+    const { trail } = cursorStateRef.current;
+    
+    // Mark trail dots as fading when starting to move
+    const markedTrail = trail.map(dot => ({
+      ...dot,
+      isFading: dot.isTrailDot ? true : dot.isFading
+    }));
+    
+    // Create new pattern dots
+    const newDots: DotPosition[] = [];
+    
+    // Calculate speed magnitude
+    const speedMagnitude = Math.sqrt(
+      speedRef.current.x * speedRef.current.x + 
+      speedRef.current.y * speedRef.current.y
+    );
+    
+    // Dynamic radius adjustment
+    const dynamicRadius = Math.max(6, config.radius - Math.min(speedMagnitude * 0.1, 8));
+    
+    // Create inner ring dots
+    for (let xOffset = -config.innerRadius; xOffset <= config.innerRadius; xOffset += config.gridSize/2) {
+      for (let yOffset = -config.innerRadius; yOffset <= config.innerRadius; yOffset += config.gridSize/2) {
+        const distance = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+        
+        if (distance <= config.innerRadius) {
+          const dotProbability = 0.6 - (distance / config.innerRadius) * 0.3;
+          
+          if (Math.random() < dotProbability) {
+            const size = Math.max(0.8, 1.5 * (1 - distance / config.innerRadius));
+            const opacity = 0.7 - (distance / config.innerRadius) * 0.2;
+            
+            newDots.push({
+              x: clientX + xOffset,
+              y: clientY + yOffset,
+              opacity,
+              size,
+              distanceFromCursor: distance,
+              isTrailDot: false,
+              creationTime: currentTime,
+              isFading: false
+            });
+          }
+        }
+      }
+    }
+    
+    // Create outer ring dots
+    const outerGridStep = config.gridSize * 1.5;
+    for (let xOffset = -dynamicRadius; xOffset <= dynamicRadius; xOffset += outerGridStep) {
+      for (let yOffset = -dynamicRadius; yOffset <= dynamicRadius; yOffset += outerGridStep) {
+        const distance = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+        
+        if (distance > config.innerRadius && distance <= dynamicRadius) {
+          const gradientFactor = 1 - ((distance - config.innerRadius) / (dynamicRadius - config.innerRadius));
+          const dotProbability = 0.4 * gradientFactor * Math.max(0.2, 1 - speedMagnitude * 0.01);
+          
+          if (Math.random() < dotProbability) {
+            const size = Math.max(0.6, 1.2 * gradientFactor);
+            
+            newDots.push({
+              x: clientX + xOffset,
+              y: clientY + yOffset,
+              opacity: 0.6 * gradientFactor,
+              size,
+              distanceFromCursor: distance,
+              isTrailDot: false,
+              creationTime: currentTime,
+              isFading: false
+            });
+          }
+        }
+      }
+    }
+    
+    // Generate trail dots along the path
+    const trailDots = generateTrailDots(previousPositionsRef.current, currentTime);
+    
+    // Combine all dots
+    const currentTrail = [
+      ...markedTrail.filter(dot => dot.opacity > 0.01),
+      ...newDots,
+      ...trailDots
+    ];
+    
+    // Keep only the most recent dots
+    const limitedTrail = currentTrail.length > maxDots 
+      ? currentTrail.slice(currentTrail.length - maxDots) 
+      : currentTrail;
+    
+    // Update ref directly
+    cursorStateRef.current = {
+      isVisible: true,
+      trail: limitedTrail,
+      lastMoveTime: currentTime
+    };
+    
+    // Only update the state that affects rendering
+    setTrail(limitedTrail);
+  }, [config, generateTrailDots]);
+  
+  // Throttled mouse move handler
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (throttleRef.current !== null) return;
+    
     // Throttle updates
     throttleRef.current = window.setTimeout(() => {
       throttleRef.current = null;
-    }, throttleMs);
+    }, config.throttleMs);
     
-    setCursorState(prev => {
-      // Mark trail dots as fading when starting to move
-      const markedTrail = prev.trail.map(dot => ({
-        ...dot,
-        isFading: dot.isTrailDot ? true : dot.isFading
-      }));
-      
-      // Create new pattern dots
-      const newDots: DotPosition[] = [];
-      
-      // Adjust radius based on speed
-      const speedMagnitude = Math.sqrt(
-        speedRef.current.x * speedRef.current.x + 
-        speedRef.current.y * speedRef.current.y
-      );
-      
-      // Dynamic radius adjustment - gets smaller with faster movement
-      const dynamicRadius = Math.max(6, radius - Math.min(speedMagnitude * 0.1, 8));
-      
-      // Create gradient effect with two different densities
-      // Inner ring - very dense
-      for (let xOffset = -innerRadius; xOffset <= innerRadius; xOffset += gridSize/2) {
-        for (let yOffset = -innerRadius; yOffset <= innerRadius; yOffset += gridSize/2) {
-          const distance = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-          
-          if (distance <= innerRadius) {
-            // High probability for inner circle dots
-            const dotProbability = 0.7 - (distance / innerRadius) * 0.3;
-            
-            if (Math.random() < dotProbability) {
-              const size = Math.max(0.8, 1.5 * (1 - distance / innerRadius));
-              
-              newDots.push({
-                x: e.clientX + xOffset,
-                y: e.clientY + yOffset,
-                opacity: 0.7 - (distance / innerRadius) * 0.2,
-                size,
-                distanceFromCursor: distance,
-                isTrailDot: false,
-                creationTime: currentTime,
-                initialOpacity: 0.7 - (distance / innerRadius) * 0.2,
-                velocityFactor: speedMagnitude * 0.01,
-                isFading: false
-              });
-            }
-          }
-        }
-      }
-      
-      // Outer ring - less dense, creates gradual thinning
-      for (let xOffset = -dynamicRadius; xOffset <= dynamicRadius; xOffset += gridSize) {
-        for (let yOffset = -dynamicRadius; yOffset <= dynamicRadius; yOffset += gridSize) {
-          const distance = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-          
-          // Only in the outer ring (between innerRadius and dynamicRadius)
-          if (distance > innerRadius && distance <= dynamicRadius) {
-            // Probability decreases as we move outward - creating gradient effect
-            const gradientFactor = 1 - ((distance - innerRadius) / (dynamicRadius - innerRadius));
-            const dotProbability = 0.5 * gradientFactor * Math.max(0.2, 1 - speedMagnitude * 0.01);
-            
-            if (Math.random() < dotProbability) {
-              const size = Math.max(0.6, 1.2 * gradientFactor);
-              
-              newDots.push({
-                x: e.clientX + xOffset,
-                y: e.clientY + yOffset,
-                opacity: 0.6 * gradientFactor,
-                size,
-                distanceFromCursor: distance,
-                isTrailDot: false,
-                creationTime: currentTime,
-                initialOpacity: 0.6 * gradientFactor,
-                velocityFactor: speedMagnitude * 0.01,
-                isFading: false
-              });
-            }
-          }
-        }
-      }
-      
-      // Generate trail dots along the path
-      const trailDots = generateTrailDots(previousPositionsRef.current, currentTime);
-      
-      // Combine all dots - keeping the filtered ones
-      const currentTrail = [
-        ...markedTrail.filter(dot => dot.opacity > 0.01), // Keep visible dots
-        ...newDots,
-        ...trailDots
-      ];
-      
-      // Keep only the most recent dots
-      const limitedTrail = currentTrail.length > maxDots 
-        ? currentTrail.slice(currentTrail.length - maxDots) 
-        : currentTrail;
-      
-      return {
-        position: { x: e.clientX, y: e.clientY },
-        isVisible: true,
-        trail: limitedTrail,
-        lastMoveTime: currentTime
-      };
-    });
-  }, [generateTrailDots]);
+    updateCursorState(e.clientX, e.clientY);
+  }, [config.throttleMs, updateCursorState]);
   
   const handleMouseLeave = useCallback(() => {
-    setCursorState(prev => ({
-      ...prev,
-      isVisible: false
-    }));
+    cursorStateRef.current.isVisible = false;
   }, []);
   
-  // Animation loop to decay dots
+  // Animation loop for dot decay
   useEffect(() => {
     const animate = () => {
       const currentTime = Date.now();
+      const { trail, lastMoveTime } = cursorStateRef.current;
+      const { decayRate, trailDecayRate, fastDecayRate } = config;
       
-      setCursorState(prev => {
-        const isIdle = currentTime - prev.lastMoveTime > 1000;
-        
-        return {
-          ...prev,
-          trail: prev.trail.map(dot => {
-            // Fast decay for fading trail dots or during idle
-            if ((dot.isTrailDot && dot.isFading) || isIdle) {
-              return {
-                ...dot,
-                opacity: dot.opacity > 0 ? dot.opacity - fastDecayRate : 0,
-                size: dot.size * 0.97
-              };
-            }
-            
+      const isIdle = currentTime - lastMoveTime > 1000;
+      
+      // Only update state if there are dots to animate
+      if (trail.length > 0) {
+        const updatedTrail = trail.filter(dot => {
+          // Fast decay for fading trail dots or during idle
+          if ((dot.isTrailDot && dot.isFading) || isIdle) {
+            dot.opacity = dot.opacity > 0 ? dot.opacity - fastDecayRate : 0;
+            dot.size = dot.size * 0.97;
+          } else {
             // Regular decay
             const age = currentTime - dot.creationTime;
             const ageFactor = Math.min(1, age / 1000);
             
-            let fadeRate;
-            if (dot.isTrailDot) {
-              fadeRate = trailDecayRate * (1 + ageFactor * 2);
-            } else {
-              fadeRate = decayRate * (1 + dot.distanceFromCursor * 0.01) * (1 + ageFactor);
-            }
+            const fadeRate = dot.isTrailDot
+              ? trailDecayRate * (1 + ageFactor * 2)
+              : decayRate * (1 + dot.distanceFromCursor * 0.01) * (1 + ageFactor);
             
-            return {
-              ...dot,
-              size: dot.size * (dot.isTrailDot ? 0.999 : 0.995),
-              opacity: dot.opacity > 0 
-                ? dot.opacity - fadeRate
-                : 0,
-            };
-          }).filter(dot => dot.opacity > 0.01)
-        };
-      });
+            dot.size = dot.size * (dot.isTrailDot ? 0.999 : 0.995);
+            dot.opacity = dot.opacity > 0 ? dot.opacity - fadeRate : 0;
+          }
+          
+          return dot.opacity > 0.01; // Keep only visible dots
+        });
+        
+        cursorStateRef.current.trail = updatedTrail;
+        setTrail(updatedTrail);
+      }
       
       requestRef.current = requestAnimationFrame(animate);
     };
     
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
     requestRef.current = requestAnimationFrame(animate);
     
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
       if (requestRef.current) {
         cancelAnimationFrame(requestRef.current);
       }
     };
+  }, [config]);
+  
+  // Set up event listeners
+  useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, [handleMouseMove, handleMouseLeave]);
   
+  // Memoized dot style
+  const dotStyle = useMemo(() => ({
+    position: 'fixed' as const,
+    borderRadius: '50%',
+    pointerEvents: 'none' as const,
+    zIndex: 9999
+  }), []);
+  
   return (
-    <div className="cursor-container">
-      {cursorState.trail.map((dot, i) => (
+    <>
+      {trail.map((dot, i) => (
         <div
-          key={i}
-          className="halftone-dot"
+          key={`dot-${i}`}
           style={{
+            ...dotStyle,
             left: `${dot.x}px`,
             top: `${dot.y}px`,
             opacity: dot.opacity,
@@ -333,6 +340,6 @@ export default function HalftoneCursor() {
           }}
         />
       ))}
-    </div>
+    </>
   );
 }
