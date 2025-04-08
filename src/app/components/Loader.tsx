@@ -42,25 +42,25 @@ const Loader: React.FC = () => {
   const [visibleLines, setVisibleLines] = useState<number>(0);
   const [percentage, setPercentage] = useState<number>(0);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+  const [catComplete, setCatComplete] = useState<boolean>(false);
   
   useEffect(() => {
     const totalLines = asciiLines.length;
-    const loadTime = 1500; // 1.5 seconds
+    const loadTime = 1500;
     const lineInterval = loadTime / totalLines;
     const percentageInterval = loadTime / 100;
     
-    // Line animation
     const lineTimer = setInterval(() => {
       setVisibleLines(prev => {
         if (prev < totalLines) {
           return prev + 1;
         }
         clearInterval(lineTimer);
+        setCatComplete(true);
         return prev;
       });
     }, lineInterval);
     
-    // Percentage animation
     const percentTimer = setInterval(() => {
       setPercentage(prev => {
         if (prev < 100) {
@@ -71,16 +71,21 @@ const Loader: React.FC = () => {
       });
     }, percentageInterval);
     
-    // Complete animation
-    setTimeout(() => {
-      setIsComplete(true);
-    }, loadTime);
-    
     return () => {
       clearInterval(lineTimer);
       clearInterval(percentTimer);
     };
   }, []);
+  
+  useEffect(() => {
+    if (catComplete) {
+      const pauseTimer = setTimeout(() => {
+        setIsComplete(true);
+      }, 200);
+      
+      return () => clearTimeout(pauseTimer);
+    }
+  }, [catComplete]);
   
   if (isComplete) {
     return null;
@@ -88,21 +93,16 @@ const Loader: React.FC = () => {
   
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-lemon-chiffon z-50">
-      <div className="flex flex-col items-center max-w-3xl w-full px-4 py-10">
-        <div className="h-[300px] w-full flex items-center justify-center relative">
+      <div className="flex flex-col items-center w-full px-4 py-10">
+        <div className="h-[300px] flex items-center justify-center">
           <pre 
-            className="text-jet select-none absolute"
+            className="text-jet select-none"
             style={{
-              fontFamily: 'var(--font-jetbrains-mono), monospace',
+              fontFamily: 'monospace',
               fontSize: '10px', 
-              lineHeight: '1.2',
-              letterSpacing: '0.1em',
+              lineHeight: '1', 
               whiteSpace: 'pre',
-              display: 'block',
-              height: 'auto',
-              width: 'auto',
-              transform: 'scale(1)',
-              transformOrigin: 'center center'
+              width: 'fit-content'
             }}
           >
             {asciiLines.slice(0, visibleLines).join('\n')}
@@ -110,11 +110,11 @@ const Loader: React.FC = () => {
         </div>
         
         <div className="mt-10">
-          <div className="text-center text-3xl font-bold text-onyx font-mono mb-4">
+          <div className="text-center text-3xl font-bold text-jet font-mono mb-4">
             loading
           </div>
           
-          <div className="text-center text-5xl font-bold text-mustard font-mono">
+          <div className="text-center text-5xl font-bold text-onyx font-mono">
             {percentage}%
           </div>
         </div>

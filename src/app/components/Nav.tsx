@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 interface NavProps {
@@ -13,68 +13,104 @@ interface NavProps {
 
 export default function Nav({ sections }: NavProps) {
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || '');
-  const { scrollYProgress } = useScroll();
-  const width = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+  const navRef = useRef<HTMLDivElement>(null);
+  const progressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const sectionElements = sections.map(section => ({
-        id: section.id,
-        element: document.getElementById(section.id),
-      }));
-
-      for (let i = sectionElements.length - 1; i >= 0; i--) {
-        const { id, element } = sectionElements[i];
-        if (!element) continue;
-
-        const rect = element.getBoundingClientRect();
-        if (rect.top <= window.innerHeight * 0.5) {
-          setActiveSection(id);
-          break;
+      if (progressTimeoutRef.current) return;
+      
+      progressTimeoutRef.current = setTimeout(() => {
+        const sectionElements = sections.map(section => ({
+          id: section.id,
+          element: document.getElementById(section.id),
+        }));
+        
+        // Find the active section based on viewport middle point
+        const viewportMiddle = window.innerHeight / 2;
+        
+        // Check sections from bottom to top for better UX when scrolling up
+        for (let i = sectionElements.length - 1; i >= 0; i--) {
+          const { id, element } = sectionElements[i];
+          if (!element) continue;
+          
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= viewportMiddle) {
+            if (activeSection !== id) {
+              setActiveSection(id);
+            }
+            break;
+          }
         }
+        
+        progressTimeoutRef.current = null;
+      }, 50);
+    };
+    
+    // Call once on mount
+    handleScroll();
+    
+    // Set up event listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (progressTimeoutRef.current) {
+        clearTimeout(progressTimeoutRef.current);
       }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [sections]);
+  }, [sections, activeSection]);
 
   return (
-    <nav className="fixed left-0 top-0 w-16 h-full flex flex-col items-center justify-center z-50 bg-lemon-chiffon">
-      {/* Animated scroll tracker line */}
-      <div className="absolute left-[50%] top-4 bottom-4 w-[2px] bg-onyx bg-opacity-10">
-        <motion.div 
-          className="absolute top-0 w-full bg-mustard" 
-          style={{ height: width }}
-        />
-      </div>
-      
-      {/* Navigation items */}
-      <div className="flex flex-col gap-8 items-center z-10">
-        {sections.map(({ id, label }) => (
-          <Link 
-            key={id}
-            href={`#${id}`}
-            className="relative group"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <div 
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 
-                ${activeSection === id ? 'bg-mustard' : 'bg-cosmic-latte hover:bg-mustard hover:bg-opacity-50'}`}
-            >
-              <span className="text-sm font-bold text-jet">{label.slice(0, 2)}</span>
+    <nav ref={navRef} className="fixed left-0 top-0 w-16 h-full flex flex-col items-center justify-center z-50 bg-lemon-chiffon">
+      {/* Navigation items with horizontal accent lines */}
+      <div className="w-full h-full flex flex-col justify-center">
+        <div className="flex flex-col gap-10 items-start justify-center px-2">
+          {sections.map((section) => (
+            <div key={section.id} className="relative w-full">
+              <Link 
+                href={`#${section.id}`}
+                className="flex items-center group"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                {/* Active indicator dot */}
+                <motion.div
+                  className={`absolute left-0 w-2 h-2 rounded-full ${activeSection === section.id ? 'bg-mustard' : 'bg-transparent'}`}
+                  initial={false}
+                  animate={{ 
+                    opacity: activeSection === section.id ? 1 : 0,
+                    scale: activeSection === section.id ? 1 : 0.5
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                
+                {/* Label */}
+                <div className="ml-4 text-sm font-medium text-jet">
+                  {section.label}
+                </div>
+                
+                {/* Horizontal accent line */}
+                <motion.div 
+                  className={`absolute right-0 h-[2px] bg-mustard`}
+                  style={{ 
+                    left: activeSection === section.id ? '0.75rem' : '100%',
+                    display: 'block',
+                    top: 'calc(50% - 1px)'
+                  }}
+                  initial={false}
+                  animate={{ 
+                    left: activeSection === section.id ? '0.75rem' : '100%',
+                    width: activeSection === section.id ? 'calc(100% - 0.75rem)' : '0%',
+                  }}
+                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                />
+              </Link>
             </div>
-            
-            {/* Tooltip */}
-            <div className="absolute left-14 top-1/2 -translate-y-1/2 bg-jet text-lemon-chiffon py-1 px-3 rounded 
-                          opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              {label}
-            </div>
-          </Link>
-        ))}
+          ))}
+        </div>
       </div>
     </nav>
   );
