@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Nature-inspired color palette */
+  --brunswick-green: #344e41ff;
+  --fern-green: #588157ff;
+  --tea-green: #ccd5aeff;
+  --beige: #e9edc9ff;
+  --cornsilk: #fefae0ff;
+  --papaya-whip: #faedcdff;
+  --buff: #d4a373ff;
+  --coffee: #7f5539ff;
+  --bistre: #402b1dff;
+  
+  /* Base UI colors */
+  --background: var(--cornsilk);
+  --foreground: var(--bistre);
+  --primary: var(--fern-green);
+  --secondary: var(--tea-green);
+  --accent: var(--buff);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-black-han-sans);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--bistre);
+    --foreground: var(--beige);
+    --primary: var(--fern-green);
+    --secondary: var(--brunswick-green);
+    --accent: var(--buff);
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--cornsilk);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-ibm-plex-mono), monospace;
+}
+
+/* Additional utility classes for our color palette */
+.bg-brunswick-green { background-color: var(--brunswick-green); }
+.bg-fern-green { background-color: var(--fern-green); }
+.bg-tea-green { background-color: var(--tea-green); }
+.bg-beige { background-color: var(--beige); }
+.bg-cornsilk { background-color: var(--cornsilk); }
+.bg-papaya-whip { background-color: var(--papaya-whip); }
+.bg-buff { background-color: var(--buff); }
+.bg-coffee { background-color: var(--coffee); }
+.bg-bistre { background-color: var(--bistre); }
+
+.text-brunswick-green { color: var(--brunswick-green); }
+.text-fern-green { color: var(--fern-green); }
+.text-tea-green { color: var(--tea-green); }
+.text-beige { color: var(--beige); }
+.text-cornsilk { color: var(--cornsilk); }
+.text-papaya-whip { color: var(--papaya-whip); }
+.text-buff { color: var(--buff); }
+.text-coffee { color: var(--coffee); }
+.text-bistre { color: var(--bistre); }
+
+/* Custom cursor styles */
+.cursor-container {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.halftone-dot {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  will-change: opacity, transform;
+  transition: opacity 0.1s linear;
+  mix-blend-mode: multiply;
+}
+
+/* Add random rotation to dots for more organic feel */
+.halftone-dot:nth-child(odd) {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.halftone-dot:nth-child(even) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.halftone-dot:nth-child(3n) {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* Pixelated rendering for sharper halftone look */
+@media (min-resolution: 2dppx) {
+  .halftone-dot {
+    image-rendering: pixelated;
+  }
 }

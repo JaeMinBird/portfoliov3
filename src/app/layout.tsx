@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Black_Han_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import HalftoneCursor from "./components/HalftoneCursor";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const blackHanSans = Black_Han_Sans({
+  weight: "400",
+  variable: "--font-black-han-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ["400", "500", "700"],
+  variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
 });
 
@@ -25,8 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${blackHanSans.variable} ${ibmPlexMono.variable} antialiased`}
       >
+        <HalftoneCursor />
         {children}
       </body>
     </html>
