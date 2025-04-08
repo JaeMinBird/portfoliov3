@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -14,7 +14,6 @@ interface CustomNavProps {
 
 export default function CustomNav({ sections }: CustomNavProps) {
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || '');
-  const { scrollYProgress } = useScroll();
   const [sectionProgress, setSectionProgress] = useState<Record<string, number>>({});
   
   useEffect(() => {
@@ -61,7 +60,6 @@ export default function CustomNav({ sections }: CustomNavProps) {
           // Section is partially in viewport
           // Calculate what percentage of the section has moved past the top of the viewport
           const totalHeight = element.offsetHeight;
-          const visibleAmount = Math.min(rect.bottom, viewportHeight);
           const hiddenAmount = Math.max(0, -rect.top);
           const percentScrolled = hiddenAmount / totalHeight;
           
