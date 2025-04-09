@@ -28,6 +28,10 @@ export default function Home() {
         <div className="mt-10 md:mt-16">
           <About />
         </div>
+
+        <SectionWrapper>
+          <Hero />
+        </SectionWrapper>
       </div>
     </>
   );
