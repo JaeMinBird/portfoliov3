@@ -17,6 +17,7 @@ interface AsciiModelViewerProps {
     y: number;
     z: number;
   };
+  modelScale?: number;
 }
 
 export default function AsciiModelViewer({ 
@@ -26,7 +27,8 @@ export default function AsciiModelViewer({
   asciiColor = 'white',
   asciiInverted = false,
   asciiResolution = 0.2,
-  initialRotation = { x: 0.1, y: Math.PI / 6, z: 0 }
+  initialRotation = { x: 0.1, y: Math.PI / 6, z: 0 },
+  modelScale = 2.5
 }: AsciiModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -164,7 +166,7 @@ export default function AsciiModelViewer({
         const size = box.getSize(new THREE.Vector3());
         
         const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 2.5 / maxDim; // Start with smaller scale
+        const scale = modelScale / maxDim;
         model.scale.set(scale, scale, scale);
         
         model.position.x = -center.x * scale;
@@ -234,7 +236,8 @@ export default function AsciiModelViewer({
     asciiResolution, 
     initialRotation.x, 
     initialRotation.y, 
-    initialRotation.z, 
+    initialRotation.z,
+    modelScale,
     cleanup
   ]);
 
@@ -242,7 +245,11 @@ export default function AsciiModelViewer({
     <div 
       ref={containerRef} 
       className={`w-full h-full ${className}`}
-      style={{ position: 'relative' }}
+      style={{ 
+        position: 'relative', 
+        overflow: 'visible',
+        clipPath: 'none', // Ensure no clipping is applied
+      }}
     >
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center text-white">

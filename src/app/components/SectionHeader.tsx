@@ -23,7 +23,7 @@ export default function SectionHeader({ sectionId = 5 }: SectionHeaderProps) {
         style={{ backgroundColor: sectionInfo.color }}
       >
         {/* ASCII Model Background - Full Size */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden md:inset-auto md:bottom-1/4 md:left-6/8 md:w-[400px] md:h-[400px]">
+        <div className="absolute inset-0 w-full h-full overflow-hidden md:inset-auto pointer-events-none md:bottom-1/4 md:left-6/8 md:w-[400px] md:h-[400px]">
           <AsciiModelViewer 
             modelPath={sectionInfo.modelPath}
             className="w-full h-[100%]"
@@ -32,6 +32,7 @@ export default function SectionHeader({ sectionId = 5 }: SectionHeaderProps) {
             asciiInverted={sectionInfo.ascii.inverted}
             asciiResolution={sectionInfo.ascii.resolution}
             initialRotation={sectionInfo.modelRotation}
+            modelScale={sectionInfo.modelScale}
           />
         </div>
         

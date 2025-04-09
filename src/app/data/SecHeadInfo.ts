@@ -14,6 +14,7 @@ export interface SectionHeaderInfo {
     y: number;
     z: number;
   };
+  modelScale?: number;
 }
 
 export const sectionHeaders: SectionHeaderInfo[] = [
@@ -32,7 +33,8 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       x: 0.1,
       y: Math.PI / 6,
       z: 0
-    }
+    },
+    modelScale: 2.5
   },
   {
     id: 1, 
@@ -49,24 +51,26 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       x: 0.3,
       y: Math.PI / 4,
       z: 0.1
-    }
+    },
+    modelScale: 2.5
   },
   {
     id: 2,
-    title: "skills",
+    title: "projects",
     color: "#ff6b6b", // coral color
-    modelPath: "/models/sphere.glb",
+    modelPath: "/models/pc.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "white",
       inverted: false,
-      resolution: 0.2
+      resolution: 0.3
     },
     modelRotation: {
-      x: 0,
-      y: Math.PI / 3,
-      z: 0
-    }
+      x: -.6,
+      y: Math.PI / -3,
+      z: -.4
+    },
+    modelScale: 2.5
   },
   {
     id: 3,
@@ -83,7 +87,8 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       x: 0.5,
       y: 0,
       z: 0
-    }
+    },
+    modelScale: 2.5
   },
   {
     id: 4,
@@ -100,7 +105,8 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       x: 0.2,
       y: Math.PI / 2,
       z: 0.1
-    }
+    },
+    modelScale: 2.5
   },
   {
     id: 5,
@@ -109,14 +115,15 @@ export const sectionHeaders: SectionHeaderInfo[] = [
     modelPath: "/models/rotary.glb",
     ascii: {
       characters: " .:-+*=%@#",
-      color: "#2c2c2cff",
+      color: "#white",
       inverted: false,
-      resolution: 0.2
+      resolution: 0.4
     },
     modelRotation: {
-      x: 0.1,
-      y: Math.PI / -2,
-      z: 0
-    }
+      x: -.2,
+      y: Math.PI / -1.5,
+      z: -.3
+    },
+    modelScale: 2.5
   }
 ]; 
