@@ -67,7 +67,7 @@ export const sectionHeaders: SectionHeaderInfo[] = [
     },
     modelRotation: {
       x: -.6,
-      y: Math.PI / -3,
+      y: Math.PI / -2.5,
       z: -.4
     },
     modelScale: 2.5
