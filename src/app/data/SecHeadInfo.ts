@@ -117,7 +117,7 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       characters: " .:-+*=%@#",
       color: "#white",
       inverted: false,
-      resolution: 0.4
+      resolution: 0.3
     },
     modelRotation: {
       x: -.2,
