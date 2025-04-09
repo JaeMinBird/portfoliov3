@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import SectionWrapper from './components/SectionWrapper';
 import Hero from './components/Hero';
 import Loader from './components/Loader';
-import About from './components/About';
+import SectionHeader from './components/SectionHeader';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ export default function Home() {
         </SectionWrapper>
         
         <div className="mt-10 md:mt-16">
-          <About />
+          <SectionHeader sectionId={5} />
         </div>
 
         <SectionWrapper>
