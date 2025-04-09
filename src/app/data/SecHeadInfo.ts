@@ -111,13 +111,13 @@ export const sectionHeaders: SectionHeaderInfo[] = [
   {
     id: 5,
     title: "contact",
-    color: "#ffe042ff", // mustard color (same as original)
+    color: "#FFDB25", // schoolbus yellow
     modelPath: "/models/rotary.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "#white",
       inverted: false,
-      resolution: 0.3
+      resolution: 0.4
     },
     modelRotation: {
       x: -.2,
