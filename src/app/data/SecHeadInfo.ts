@@ -105,11 +105,11 @@ export const sectionHeaders: SectionHeaderInfo[] = [
   {
     id: 5,
     title: "contact",
-    color: "#ffc857", // mustard color (same as original)
+    color: "#ffe042ff", // mustard color (same as original)
     modelPath: "/models/rotary.glb",
     ascii: {
       characters: " .:-+*=%@#",
-      color: "white",
+      color: "#2c2c2cff",
       inverted: false,
       resolution: 0.2
     },
