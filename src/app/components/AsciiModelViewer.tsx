@@ -157,7 +157,7 @@ export default function AsciiModelViewer({
 
     // Setup Draco decoder
     const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    dracoLoader.setDecoderPath('/draco/');
     dracoLoader.setDecoderConfig({ type: 'js' });
 
     // Load model with Draco support
@@ -198,7 +198,7 @@ export default function AsciiModelViewer({
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
       },
       (error) => {
-        console.error('Error loading model:', error);
+        console.error('Error loading model:', error, modelPath);
       }
     );
 
