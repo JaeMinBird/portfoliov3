@@ -41,24 +41,28 @@ export default function AsciiModelViewer({
   const initialScrollY = useRef<number>(0);
   const baseRotationY = useRef<number>(0);
   const animationFrameRef = useRef<number | null>(null);
-  const initialCameraZ = useRef<number>(8);
-  const targetCameraZ = useRef<number>(3);
+  const initialCameraZ = useRef<number>(8); // Start further away
+  const targetCameraZ = useRef<number>(3); // Zoom in target
 
+  // Clean up function
   const cleanup = useCallback(() => {
     window.removeEventListener('scroll', handleScroll);
     window.removeEventListener('resize', handleResize);
-    if (containerRef.current && asciiEffectRef.current && 
-        containerRef.current.contains(asciiEffectRef.current.domElement)) {
+    
+    if (containerRef.current && asciiEffectRef.current) {
       containerRef.current.removeChild(asciiEffectRef.current.domElement);
     }
+    
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
+    
     if (rendererRef.current) {
       rendererRef.current.dispose();
     }
   }, []);
 
+  // Functions defined outside useEffect to avoid recreating them
   const handleScroll = () => {
     if (modelRef.current) {
       const scrollDelta = window.scrollY - initialScrollY.current;
@@ -68,10 +72,13 @@ export default function AsciiModelViewer({
 
   const handleResize = () => {
     if (!containerRef.current || !asciiEffectRef.current || !rendererRef.current || !cameraRef.current) return;
+    
     const width = containerRef.current.clientWidth;
     const height = containerRef.current.clientHeight;
+    
     cameraRef.current.aspect = width / height;
     cameraRef.current.updateProjectionMatrix();
+    
     rendererRef.current.setSize(width, height);
     asciiEffectRef.current.setSize(width, height);
   };
@@ -79,38 +86,53 @@ export default function AsciiModelViewer({
   const isInViewport = (element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    
     const visibleRatio = Math.min(
-      Math.max((windowHeight - Math.max(0, rect.top)) / rect.height, 0),
+      Math.max(
+        (windowHeight - Math.max(0, rect.top)) / rect.height,
+        0
+      ),
       1
     );
+    
     return visibleRatio;
   };
 
+  // Main setup effect
   useEffect(() => {
+    // Cleanup previous setup if any
     cleanup();
+    
     if (!containerRef.current) return;
 
+    // Initialize Three.js scene
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = null;
+    scene.background = null; // Transparent background
 
+    // Camera
     const camera = new THREE.PerspectiveCamera(
-      55,
-      containerRef.current.clientWidth / containerRef.current.clientHeight,
-      0.1,
+      55, 
+      containerRef.current.clientWidth / containerRef.current.clientHeight, 
+      0.1, 
       1000
     );
     cameraRef.current = camera;
     camera.position.z = initialCameraZ.current;
     camera.position.y = 0.5;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true, 
+      alpha: true
+    });
     rendererRef.current = renderer;
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-
+    
+    // ASCII effect with provided parameters
     const asciiEffect = new AsciiEffect(
-      renderer,
-      asciiCharacters,
+      renderer, 
+      asciiCharacters, 
       { invert: asciiInverted, resolution: asciiResolution }
     );
     asciiEffectRef.current = asciiEffect;
@@ -125,68 +147,97 @@ export default function AsciiModelViewer({
     asciiEffect.domElement.style.zIndex = '1';
     containerRef.current.appendChild(asciiEffect.domElement);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(1, 1, 1);
-    scene.add(dirLight);
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    scene.add(ambientLight);
 
-    const loader = new GLTFLoader();
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+
+    // Setup Draco decoder
     const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/'); // Optional Draco support
-    loader.setDRACOLoader(dracoLoader);
+    dracoLoader.setDecoderPath('/draco/');
+    dracoLoader.setDecoderConfig({ type: 'js' });
 
+    // Load model with Draco support
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+    
     setIsLoaded(false);
     loader.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
         modelRef.current = model;
+        
+        // Center and scale the model
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
+        
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = modelScale / maxDim;
         model.scale.set(scale, scale, scale);
-        model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-        model.rotation.set(initialRotation.x, initialRotation.y, initialRotation.z);
+        
+        model.position.x = -center.x * scale;
+        model.position.y = -center.y * scale; // Center vertically
+        model.position.z = -center.z * scale;
+        
+        // Set initial rotation from props
+        model.rotation.x = initialRotation.x;
+        model.rotation.y = initialRotation.y;
+        model.rotation.z = initialRotation.z;
         baseRotationY.current = model.rotation.y;
+        
         scene.add(model);
         setIsLoaded(true);
       },
       (xhr) => {
+        // Progress callback
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
       },
       (error) => {
-        console.error('Error loading model:', error);
+        console.error('Error loading model:', error, modelPath);
       }
     );
 
+    // Store initial scroll position
     initialScrollY.current = window.scrollY;
 
+    // Animation loop
     const animate = () => {
       if (modelRef.current && isLoaded) {
+        // Add a subtle continuous rotation
         modelRef.current.rotation.y += 0.001;
       }
-
+      
+      // Update camera position based on scroll
       if (containerRef.current && cameraRef.current) {
         const visibleRatio = isInViewport(containerRef.current);
+        
+        // Interpolate camera position based on visibility
         const targetZ = initialCameraZ.current - 
           (visibleRatio * (initialCameraZ.current - targetCameraZ.current));
+        
+        // Smooth camera movement
         cameraRef.current.position.z += (targetZ - cameraRef.current.position.z) * 0.05;
       }
-
+      
       if (asciiEffectRef.current && cameraRef.current && sceneRef.current) {
         asciiEffectRef.current.render(sceneRef.current, cameraRef.current);
       }
-
+      
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
     animate();
 
+    // Add event listeners
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
 
+    // Cleanup on unmount or when dependencies change
     return cleanup;
   }, [
     modelPath, 
@@ -208,7 +259,7 @@ export default function AsciiModelViewer({
       style={{ 
         position: 'relative', 
         overflow: 'visible',
-        clipPath: 'none',
+        clipPath: 'none', // Ensure no clipping is applied
       }}
     >
       {!isLoaded && (
