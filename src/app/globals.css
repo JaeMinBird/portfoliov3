@@ -40,18 +40,39 @@ body {
   font-family: var(--font-ibm-plex-mono), monospace;
 }
 
+/* Improved custom scrollbar */
 ::-webkit-scrollbar {
-  height: 5px;
-  width: 5px;
-  background: var(--foreground);
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--background);
+  background: var(--onyx);
+  border-radius: 999px;
 }
 
-::-webkit-scrollbar-corner {
-  background: var(--foreground);
+/* Hide all scrollbar buttons/arrows */
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:single-button,
+::-webkit-scrollbar-button:vertical,
+::-webkit-scrollbar-button:horizontal,
+::-webkit-scrollbar-button:vertical:start,
+::-webkit-scrollbar-button:vertical:end,
+::-webkit-scrollbar-button:horizontal:start,
+::-webkit-scrollbar-button:horizontal:end {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--onyx) transparent;
 }
 
 
