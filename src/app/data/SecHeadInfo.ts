@@ -40,7 +40,7 @@ export const sectionHeaders: SectionHeaderInfo[] = [
     id: 2,
     title: "career",
     color: "#5a9bd5", // blue color
-    modelPath: "/models/briefcase-optimized.glb",
+    modelPath: "/models/briefcase.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "white",
@@ -58,7 +58,7 @@ export const sectionHeaders: SectionHeaderInfo[] = [
     id: 3,
     title: "projects",
     color: "#ff6b6b", // coral color
-    modelPath: "/models/pc-optimized.glb",
+    modelPath: "/models/pc.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "white",
