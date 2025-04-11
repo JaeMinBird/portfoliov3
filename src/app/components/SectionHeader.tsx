@@ -9,12 +9,14 @@ interface SectionHeaderProps {
   sectionId: number;
 }
 
-export default function SectionHeader({ sectionId = 5 }: SectionHeaderProps) {
-  const sectionInfo: SectionHeaderInfo = sectionHeaders[sectionId] || sectionHeaders[0];
+export default function SectionHeader({ sectionId = 6 }: SectionHeaderProps) {
+  // Adjust the index to be 0-based for array access (id 1 is at index 0)
+  const index = sectionId - 1;
+  const sectionInfo: SectionHeaderInfo = sectionHeaders[index >= 0 && index < sectionHeaders.length ? index : 0];
   
   // Format the section number with leading zeros
   const formattedId = String(sectionInfo.id).padStart(2, '0');
-  const totalSections = String(sectionHeaders.length - 1).padStart(2, '0');
+  const totalSections = String(sectionHeaders.length).padStart(2, '0');
   
   return (
     <SectionWrapper className="p-0">

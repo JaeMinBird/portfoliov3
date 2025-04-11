@@ -19,33 +19,15 @@ export interface SectionHeaderInfo {
 
 export const sectionHeaders: SectionHeaderInfo[] = [
   {
-    id: 0,
-    title: "about",
-    color: "#ffc857", // mustard color
-    modelPath: "/models/rotary.glb",
-    ascii: {
-      characters: " .:-+*=%@#",
-      color: "white",
-      inverted: false,
-      resolution: 0.2
-    },
-    modelRotation: {
-      x: 0.1,
-      y: Math.PI / 6,
-      z: 0
-    },
-    modelScale: 2.5
-  },
-  {
     id: 1, 
-    title: "projects",
+    title: "about",
     color: "#4ecdc4", // teal color
-    modelPath: "/models/cube.glb",
+    modelPath: "/models/book.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "white",
       inverted: false,
-      resolution: 0.2
+      resolution: 0.4
     },
     modelRotation: {
       x: 0.3,

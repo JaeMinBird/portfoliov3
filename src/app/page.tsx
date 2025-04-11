@@ -26,6 +26,10 @@ export default function Home() {
         </SectionWrapper>
         
         <div className="mt-10 md:mt-16">
+          <SectionHeader sectionId={1} />
+        </div>
+
+        <div className="mt-10 md:mt-16">
           <SectionHeader sectionId={2} />
         </div>
         
