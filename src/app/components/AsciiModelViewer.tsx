@@ -149,8 +149,7 @@ export default function AsciiModelViewer({
 
     // Apply willReadFrequently to the ASCII effect's canvas
     if (asciiEffect.domElement instanceof HTMLCanvasElement) {
-      // Remove or use the ctx variable
-      asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
+      const ctx = asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
     }
 
     // Lights
@@ -255,8 +254,7 @@ export default function AsciiModelViewer({
     initialRotation.y, 
     initialRotation.z,
     modelScale,
-    cleanup,
-    isLoaded // Add isLoaded to the dependency array
+    cleanup
   ]);
 
   return (
