@@ -56,9 +56,27 @@ export const sectionHeaders: SectionHeaderInfo[] = [
   },
   {
     id: 2,
+    title: "career",
+    color: "#5a9bd5", // blue color
+    modelPath: "/models/briefcase-optimized.glb",
+    ascii: {
+      characters: " .:-+*=%@#",
+      color: "white",
+      inverted: false,
+      resolution: 0.3
+    },
+    modelRotation: {
+      x: 0.5,
+      y: Math.PI / -2.5,
+      z: 0
+    },
+    modelScale: 2.0
+  },
+  {
+    id: 3,
     title: "projects",
     color: "#ff6b6b", // coral color
-    modelPath: "/models/pc.glb",
+    modelPath: "/models/pc-optimized.glb",
     ascii: {
       characters: " .:-+*=%@#",
       color: "white",
@@ -69,24 +87,6 @@ export const sectionHeaders: SectionHeaderInfo[] = [
       x: -.6,
       y: Math.PI / -2.5,
       z: -.4
-    },
-    modelScale: 2.5
-  },
-  {
-    id: 3,
-    title: "experience",
-    color: "#5a9bd5", // blue color
-    modelPath: "/models/torus.glb",
-    ascii: {
-      characters: " .:-+*=%@#",
-      color: "white",
-      inverted: false,
-      resolution: 0.2
-    },
-    modelRotation: {
-      x: 0.5,
-      y: 0,
-      z: 0
     },
     modelScale: 2.5
   },
@@ -111,7 +111,7 @@ export const sectionHeaders: SectionHeaderInfo[] = [
   {
     id: 5,
     title: "contact",
-    color: "#FFDB25", // schoolbus yellow
+    color: "#FFE66A", // naples yellow
     modelPath: "/models/rotary.glb",
     ascii: {
       characters: " .:-+*=%@#",

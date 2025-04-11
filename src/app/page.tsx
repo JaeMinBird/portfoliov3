@@ -28,6 +28,10 @@ export default function Home() {
         <div className="mt-10 md:mt-16">
           <SectionHeader sectionId={2} />
         </div>
+        
+        <div className="mt-10 md:mt-16">
+          <SectionHeader sectionId={3} />
+        </div>
 
         <div className="mt-10 md:mt-16">
           <SectionHeader sectionId={5} />

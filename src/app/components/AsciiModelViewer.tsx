@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { AsciiEffect } from 'three/examples/jsm/effects/AsciiEffect.js';
 
 interface AsciiModelViewerProps {
@@ -121,7 +122,10 @@ export default function AsciiModelViewer({
     camera.position.y = 0.5;
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true, 
+      alpha: true
+    });
     rendererRef.current = renderer;
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
     
@@ -143,6 +147,11 @@ export default function AsciiModelViewer({
     asciiEffect.domElement.style.zIndex = '1';
     containerRef.current.appendChild(asciiEffect.domElement);
 
+    // Apply willReadFrequently to the ASCII effect's canvas
+    if (asciiEffect.domElement instanceof HTMLCanvasElement) {
+      const ctx = asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
+    }
+
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
@@ -151,8 +160,15 @@ export default function AsciiModelViewer({
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    // Load model
+    // Setup Draco decoder
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    dracoLoader.setDecoderConfig({ type: 'js' });
+
+    // Load model with Draco support
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+    
     setIsLoaded(false);
     loader.load(
       modelPath,
