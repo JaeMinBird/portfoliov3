@@ -33,7 +33,6 @@ export default function AsciiModelViewer({
 }: AsciiModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const isLoadedRef = useRef(false); // Add this ref to track isLoaded state
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -256,8 +255,8 @@ export default function AsciiModelViewer({
     initialRotation.y, 
     initialRotation.z,
     modelScale,
-    cleanup
-    // Remove isLoaded from dependency array - we'll handle it differently
+    cleanup,
+    isLoaded // Add isLoaded to the dependency array
   ]);
 
   return (
@@ -277,9 +276,4 @@ export default function AsciiModelViewer({
       )}
     </div>
   );
-  
-  // Update the ref whenever isLoaded changes
-  useEffect(() => {
-    isLoadedRef.current = isLoaded;
-  }, [isLoaded]);
 }
