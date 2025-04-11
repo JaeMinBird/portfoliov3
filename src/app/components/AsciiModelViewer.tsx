@@ -33,6 +33,7 @@ export default function AsciiModelViewer({
 }: AsciiModelViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const isLoadedRef = useRef(false); // Add this ref to track isLoaded state
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -149,7 +150,8 @@ export default function AsciiModelViewer({
 
     // Apply willReadFrequently to the ASCII effect's canvas
     if (asciiEffect.domElement instanceof HTMLCanvasElement) {
-      const ctx = asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
+      // Remove or use the ctx variable
+      asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
     }
 
     // Lights
@@ -255,6 +257,7 @@ export default function AsciiModelViewer({
     initialRotation.z,
     modelScale,
     cleanup
+    // Remove isLoaded from dependency array - we'll handle it differently
   ]);
 
   return (
@@ -274,4 +277,9 @@ export default function AsciiModelViewer({
       )}
     </div>
   );
+  
+  // Update the ref whenever isLoaded changes
+  useEffect(() => {
+    isLoadedRef.current = isLoaded;
+  }, [isLoaded]);
 }
