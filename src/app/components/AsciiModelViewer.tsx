@@ -147,11 +147,6 @@ export default function AsciiModelViewer({
     asciiEffect.domElement.style.zIndex = '1';
     containerRef.current.appendChild(asciiEffect.domElement);
 
-    // Apply willReadFrequently to the ASCII effect's canvas
-    if (asciiEffect.domElement instanceof HTMLCanvasElement) {
-      const ctx = asciiEffect.domElement.getContext('2d', { willReadFrequently: true });
-    }
-
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
