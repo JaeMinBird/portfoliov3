@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { experiences } from '../data/Experience';
 
@@ -9,10 +8,7 @@ interface ExperienceProps {
   id?: number; // Optional ID - if not provided, all experiences will be shown
 }
 
-// SVG Patterns for icons
 const Experience: React.FC<ExperienceProps> = ({ id }) => {
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
-  
   // Filter experiences based on ID if provided
   const displayExperiences = useMemo(() => {
     if (id !== undefined) {
@@ -26,26 +22,15 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
   const borderRadius = 20;
   const borderColor = 'var(--onyx)';
 
-  // Simple generic shape to replace all complex SVG patterns
-  const genericShape = (
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-      <rect x="60" y="60" width="80" height="80" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="100" cy="100" r="40" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="100" cy="100" r="20" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-
   // Custom box with SectionWrapper-like outline
   const OutlinedBox = ({ 
     children, 
-    className = '', 
-    visible = true 
+    className = ''
   }: { 
     children: React.ReactNode;
     className?: string;
-    visible?: boolean;
   }) => (
-    <div className={`relative ${className}`} style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.3s ease' }}>
+    <div className={`relative ${className}`}>
       {/* Top-left corner */}
       <div 
         className="absolute top-0 left-0"
@@ -119,95 +104,71 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
         <div 
           key={exp.id}
           className="mb-8 md:mb-12 relative"
-          onMouseEnter={() => setHoveredId(exp.id)}
-          onMouseLeave={() => setHoveredId(null)}
         >
-          <div className="flex flex-col md:flex-row gap-3 md:gap-5">
-            {/* Left side: Icon (only visible when hovered) - Desktop only (lg+) */}
-            <div className="hidden lg:block md:w-1/3 lg:w-1/4 xl:w-1/5">
-              <OutlinedBox className="w-full aspect-square" visible={hoveredId === exp.id}>
-                <div className="h-full flex items-center justify-center">
-                  <motion.div 
-                    className="text-pink-300 w-full h-full"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ 
-                      opacity: hoveredId === exp.id ? 1 : 0,
-                      scale: hoveredId === exp.id ? 1 : 0.8
-                    }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {genericShape}
-                  </motion.div>
-                </div>
-              </OutlinedBox>
-            </div>
-            
-            {/* Right side: Content */}
-            <div className="w-full md:w-full lg:w-3/4 xl:w-4/5">
-              <OutlinedBox className="w-full h-auto min-h-[300px]">
-                <div className="mb-3 px-2">
-                  <h2 className="halftone-text mb-2 leading-tight">
-                    {exp.name}
-                  </h2>
+          <div className="w-full">
+            <OutlinedBox className="w-full h-auto min-h-[300px]">
+              <div className="mb-3 px-2">
+                <h2 className="halftone-text mb-2 leading-tight">
+                  {exp.name}
+                </h2>
+              </div>
+              
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* OVERVIEW column - increased width */}
+                <div className="w-full md:w-2/5 px-2 md:px-4">
+                  <div className="text-lg font-mono text-onyx mb-2 font-bold">OVERVIEW:</div>
+                  <p className="text-lg font-mono text-jet mb-4">
+                    {exp.description}
+                  </p>
                 </div>
                 
-                <div className="flex flex-col md:flex-row gap-4">
-                  {/* OVERVIEW column - increased width */}
-                  <div className="w-full md:w-2/5 px-2 md:px-4">
-                    <div className="text-lg font-mono text-onyx mb-2 font-bold">OVERVIEW:</div>
-                    <p className="text-lg font-mono text-jet mb-4">
-                      {exp.description}
-                    </p>
-                  </div>
-                  
-                  {/* Middle column - Position and Location */}
-                  <div className="w-full md:w-1/5 px-2 md:px-4">
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-1 gap-2">
-                      <div className="w-full sm:w-1/2">
-                        <div className="text-lg font-mono text-onyx mb-2 font-bold">POSITION:</div>
-                        <p className="text-lg font-mono text-jet mb-4">
-                          {exp.position}
-                        </p>
-                      </div>
-                      
-                      <div className="w-full sm:w-1/2">
-                        <div className="text-lg font-mono text-onyx mb-2 font-bold">LOCATION:</div>
-                        <p className="text-lg font-mono text-jet mb-4">
-                          {exp.location}
-                        </p>
-                      </div>
+                {/* Middle column - Position and Location */}
+                <div className="w-full md:w-1/5 px-2 md:px-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-1 gap-2">
+                    <div className="w-full sm:w-1/2">
+                      <div className="text-lg font-mono text-onyx mb-2 font-bold">POSITION:</div>
+                      <p className="text-lg font-mono text-jet mb-4">
+                        {exp.position}
+                      </p>
                     </div>
-                  </div>
-                  
-                  {/* SKILLS column */}
-                  <div className="w-full md:w-2/5 px-2 md:px-4">
-                    <div className="text-lg font-mono text-onyx mb-2 font-bold">KEY SKILLS:</div>
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {exp.skills.map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-1 border border-onyx/40 text-base font-mono text-jet mb-1"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                    
+                    <div className="w-full sm:w-1/2 text-right sm:text-right md:text-left">
+                      <div className="text-lg font-mono text-onyx mb-2 font-bold">LOCATION:</div>
+                      <p className="text-lg font-mono text-jet mb-4">
+                        {exp.location}
+                      </p>
                     </div>
                   </div>
                 </div>
                 
-                {/* Learn More link with reduced vertical space */}
-                <div className="flex justify-end">
-                  <div className="px-4 pt-1">
-                    <Link href={`/case/${exp.id}`}>
-                      <span className="inline-flex items-center font-mono text-lg text-jet group">
-                        <span>LEARN MORE</span>
-                        <span className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
+                {/* SKILLS column */}
+                <div className="w-full md:w-2/5 px-2 md:px-4">
+                  <div className="text-lg font-mono text-onyx mb-2 font-bold">KEY SKILLS:</div>
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {exp.skills.map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-1 border border-onyx/40 text-base font-mono text-jet mb-1"
+                      >
+                        {skill}
                       </span>
-                    </Link>
+                    ))}
                   </div>
                 </div>
-              </OutlinedBox>
-            </div>
+              </div>
+              
+              {/* Learn More link with reduced vertical space */}
+              <div className="flex justify-end">
+                <div className="px-4 pt-1">
+                  <Link href={`/case/${exp.id}`}>
+                    <span className="inline-flex items-center font-mono text-lg text-jet group">
+                      <span>LEARN MORE</span>
+                      <span className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </OutlinedBox>
           </div>
         </div>
       ))}
