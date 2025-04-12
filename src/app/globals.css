@@ -129,8 +129,6 @@ body {
 
 /* Halftone text */
 .halftone-text {
-  font-size: 4rem;
-  font-weight: 900;
   background: 
     linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.4)),
     radial-gradient(#000 0.5px, transparent 0.5px);

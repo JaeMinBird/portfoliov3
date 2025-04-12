@@ -100,7 +100,7 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
 
   return (
     <div className="w-full p-2 sm:p-4 md:p-6 lg:p-8">
-      {displayExperiences.map((exp, index) => (
+      {displayExperiences.map((exp) => (
         <div 
           key={exp.id}
           className="mb-8 md:mb-12 relative"
@@ -108,14 +108,14 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
           <div className="w-full">
             <OutlinedBox className="w-full h-auto min-h-[300px]">
               <div className="mb-3 px-2">
-                <h2 className="halftone-text mb-2 leading-tight">
-                  {exp.name}
+                <h2 className="font-sans text-jet leading-none text-6xl md:text-8xl">
+                  {exp.name.toLowerCase()}
                 </h2>
               </div>
               
               <div className="flex flex-col md:flex-row gap-4">
                 {/* OVERVIEW column - increased width */}
-                <div className="w-full md:w-2/5 px-2 md:px-4">
+                <div className="w-full md:w-3/7 px-2 md:px-4 bg-red-100">
                   <div className="text-lg font-mono text-onyx mb-2 font-bold">OVERVIEW:</div>
                   <p className="text-lg font-mono text-jet mb-4">
                     {exp.description}
@@ -123,7 +123,7 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
                 </div>
                 
                 {/* Middle column - Position and Location */}
-                <div className="w-full md:w-1/5 px-2 md:px-4">
+                <div className="w-full md:w-1/7 px-2 md:px-4 bg-green-100">
                   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-1 gap-2">
                     <div className="w-full sm:w-1/2">
                       <div className="text-lg font-mono text-onyx mb-2 font-bold">POSITION:</div>
@@ -142,7 +142,7 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
                 </div>
                 
                 {/* SKILLS column */}
-                <div className="w-full md:w-2/5 px-2 md:px-4">
+                <div className="w-full md:w-3/7 px-2 md:px-4 bg-blue-100">
                   <div className="text-lg font-mono text-onyx mb-2 font-bold">KEY SKILLS:</div>
                   <div className="flex flex-wrap gap-1 mb-4">
                     {exp.skills.map((skill, idx) => (
