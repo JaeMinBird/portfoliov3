@@ -109,7 +109,7 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
             <OutlinedBox className="w-full h-auto min-h-[300px]">
               <div className="mb-3 px-2">
                 <h2 className="font-sans text-jet leading-none text-6xl md:text-8xl">
-                  {exp.name.toLowerCase()}
+                  {exp.name}
                 </h2>
               </div>
               

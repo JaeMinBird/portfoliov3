@@ -5,16 +5,15 @@ export interface Experience {
     skills: string[];
     position: string;
     location: string;
-    icon: string;
     color: string;
   }
   
   export const experiences: Experience[] = [
     {
       id: 1,
-      name: "UPSTATE ACCOUNTING & TAX",
+      name: "Upstate Accounting & Tax",
       description: "BUILT AND PRESENTED A PERFORMANT MOBILE-FIRST WEB PROTOTYPE FOR CLIENTS, BLENDING UI/UX DESIGN WITH CMS AND AGILE WORKFLOWS.",
-      position: "FRONTEND DEVELOPER",
+      position: "Web Developer Intern",
       location: "ALBANY, NY",
       skills: [
         "HTML",
@@ -26,17 +25,15 @@ export interface Experience {
         "LARAVEL",
         "OCTOBER CMS",
         "JIRA",
-        "DOCKER",
-        "AGILE METHODOLOGIES"
+        "DOCKER"
       ],
-      icon: "halftone-grid",
       color: "#FFB347"
     },
     {
       id: 2,
-      name: "MINDBURN SOLUTIONS",
+      name: "Mindburn Solutions",
       description: "SUPPORTED IT OPERATIONS AND POST-BREACH RECOVERY ACROSS WAREHOUSE ENVIRONMENTS, IMPROVING INFRASTRUCTURE RESILIENCE AND DATA INTEGRITY.",
-      position: "IT SPECIALIST",
+      position: "Support Technician",
       location: "REMOTE",
       skills: [
         "MYSQL",
@@ -46,7 +43,6 @@ export interface Experience {
         "DATA RECOVERY",
         "INVENTORY MANAGEMENT"
       ],
-      icon: "ascii-mesh",
       color: "#B0C4DE"
     }    
   ];
