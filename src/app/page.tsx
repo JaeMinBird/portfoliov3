@@ -5,6 +5,8 @@ import SectionWrapper from './components/SectionWrapper';
 import Hero from './components/Hero';
 import Loader from './components/Loader';
 import SectionHeader from './components/SectionHeader';
+import Experience from './components/Experience';
+
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,9 @@ export default function Home() {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Experience section IDs to display
+  const experienceIds = [1, 2];
 
   return (
     <>
@@ -32,6 +37,11 @@ export default function Home() {
         <div className="mt-10 md:mt-16">
           <SectionHeader sectionId={2} />
         </div>
+
+        {/* Display individual experiences */}
+        {experienceIds.map(expId => (
+          <Experience key={expId} id={expId} />
+        ))}
         
         <div className="mt-10 md:mt-16">
           <SectionHeader sectionId={3} />
