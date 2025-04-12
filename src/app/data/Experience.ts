@@ -12,7 +12,7 @@ export interface Experience {
   export const experiences: Experience[] = [
     {
       id: 1,
-      name: "ALBANY UPSTATE ACCOUNTING & TAX",
+      name: "UPSTATE ACCOUNTING & TAX",
       description: "BUILT AND PRESENTED A PERFORMANT MOBILE-FIRST WEB PROTOTYPE FOR CLIENTS, BLENDING UI/UX DESIGN WITH CMS AND AGILE WORKFLOWS.",
       position: "FRONTEND DEVELOPER",
       location: "ALBANY, NY",

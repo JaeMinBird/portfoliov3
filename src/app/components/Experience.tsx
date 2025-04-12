@@ -123,9 +123,9 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
           onMouseLeave={() => setHoveredId(null)}
         >
           <div className="flex flex-col md:flex-row gap-3 md:gap-5">
-            {/* Left side: Icon (only visible when hovered) - Desktop only */}
-            <div className="hidden md:block" style={{ width: '35vh', height: '40vh' }}>
-              <OutlinedBox className="w-full h-full" visible={hoveredId === exp.id}>
+            {/* Left side: Icon (only visible when hovered) - Desktop only (lg+) */}
+            <div className="hidden lg:block md:w-1/3 lg:w-1/4 xl:w-1/5">
+              <OutlinedBox className="w-full aspect-square" visible={hoveredId === exp.id}>
                 <div className="h-full flex items-center justify-center">
                   <motion.div 
                     className="text-pink-300 w-full h-full"
@@ -143,38 +143,36 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
             </div>
             
             {/* Right side: Content */}
-            <div className="w-full md:w-auto" style={{ flex: '1', height: '40vh' }}>
-              <OutlinedBox className="h-full">
+            <div className="w-full md:w-full lg:w-3/4 xl:w-4/5">
+              <OutlinedBox className="w-full h-auto min-h-[300px]">
                 <div className="mb-3 px-2">
                   <h2 className="halftone-text mb-2 leading-tight">
                     {exp.name}
                   </h2>
-                  <div className="w-full h-px bg-onyx"></div>
                 </div>
                 
-                <div className="flex flex-col md:flex-row h-[calc(100%-160px)]">
-                  {/* OVERVIEW column */}
-                  <div className="md:w-1/3 px-2 md:pr-4 md:pl-0">
+                <div className="flex flex-col md:flex-row gap-4">
+                  {/* OVERVIEW column - increased width */}
+                  <div className="w-full md:w-2/5 px-2 md:px-4">
                     <div className="text-lg font-mono text-onyx mb-2 font-bold">OVERVIEW:</div>
-                    <p className="text-lg font-mono text-jet mb-3">
+                    <p className="text-lg font-mono text-jet mb-4">
                       {exp.description}
                     </p>
                   </div>
                   
                   {/* Middle column - Position and Location */}
-                  <div className="md:w-1/3 px-2 md:px-4">
-                    {/* On mobile: 2-column layout for Position and Location */}
-                    <div className="grid grid-cols-2 gap-2 md:block">
-                      <div>
+                  <div className="w-full md:w-1/5 px-2 md:px-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-1 gap-2">
+                      <div className="w-full sm:w-1/2">
                         <div className="text-lg font-mono text-onyx mb-2 font-bold">POSITION:</div>
-                        <p className="text-lg font-mono text-jet mb-2 md:mb-3">
+                        <p className="text-lg font-mono text-jet mb-4">
                           {exp.position}
                         </p>
                       </div>
                       
-                      <div>
+                      <div className="w-full sm:w-1/2">
                         <div className="text-lg font-mono text-onyx mb-2 font-bold">LOCATION:</div>
-                        <p className="text-lg font-mono text-jet mb-2 md:mb-0">
+                        <p className="text-lg font-mono text-jet mb-4">
                           {exp.location}
                         </p>
                       </div>
@@ -182,13 +180,13 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
                   </div>
                   
                   {/* SKILLS column */}
-                  <div className="md:w-1/3 px-2 md:pl-4 md:pr-0">
+                  <div className="w-full md:w-2/5 px-2 md:px-4">
                     <div className="text-lg font-mono text-onyx mb-2 font-bold">KEY SKILLS:</div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mb-4">
                       {exp.skills.map((skill, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-1 border border-onyx/40 text-base font-mono text-jet"
+                          className="px-2 py-1 border border-onyx/40 text-base font-mono text-jet mb-1"
                         >
                           {skill}
                         </span>
@@ -197,30 +195,22 @@ const Experience: React.FC<ExperienceProps> = ({ id }) => {
                   </div>
                 </div>
                 
-                <div className="mt-auto text-right px-2">
-                  <Link href={`/case/${exp.id}`}>
-                    <span className="inline-flex items-center font-mono text-lg text-jet group">
-                      <span>VIEW CASE</span>
-                      <span className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
-                    </span>
-                  </Link>
+                {/* Learn More link with reduced vertical space */}
+                <div className="flex justify-end">
+                  <div className="px-4 pt-1">
+                    <Link href={`/case/${exp.id}`}>
+                      <span className="inline-flex items-center font-mono text-lg text-jet group">
+                        <span>LEARN MORE</span>
+                        <span className="ml-1 transform group-hover:translate-x-1 transition-transform duration-300">→</span>
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </OutlinedBox>
             </div>
           </div>
         </div>
       ))}
-
-      <style jsx global>{`
-        .halftone-text {
-          font-weight: 900;
-          font-size: 4rem;
-          background: url('/halftone-dots.svg');
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
-        }
-      `}</style>
     </div>
   );
 };
